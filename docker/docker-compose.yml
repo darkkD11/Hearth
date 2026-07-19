@@ -27,7 +27,7 @@ services:
     ports:
       - "7880:7880"
       - "7881:7881"
-      - "51000-51060:51000-51060/udp"
+      - "60000-60060:60000-60060/udp"
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:7880"]
       interval: 10s

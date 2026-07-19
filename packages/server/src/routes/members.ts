@@ -63,7 +63,7 @@ router.get('/servers/:serverId/members', requireAuth, async (req: Request, res: 
 router.post('/servers/:serverId/members/:userId/kick', requireAuth, async (req: Request, res: Response) => {
   try {
     const { serverId, userId } = req.params;
-    const requestingUser = (req as any).user;
+    const requestingUser = req.auth;
 
     // Check if the server owner
     const { rows: serverRows } = await db.query(

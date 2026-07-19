@@ -54,8 +54,8 @@ app.get('/api/health', async (_req, res) => {
 
 // --- API Routes ---
 app.use('/api/auth', authRouter);
-app.use('/api/channels', channelsRouter);
-app.use('/api/messages', messagesRouter);
+app.use('/api', channelsRouter);
+app.use('/api', messagesRouter);
 app.use('/api/livekit', livekitRouter);
 app.use('/api/invites', inviteRoutes);
 app.use('/api', memberRoutes);

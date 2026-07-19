@@ -5,9 +5,9 @@ import { config } from '../config/index.js';
 
 export const livekitRouter = Router();
 
-livekitRouter.get('/token', requireAuth, (req, res) => {
+livekitRouter.get('/token', requireAuth, async (req, res) => {
   const { channelId } = req.query;
-  const user = (req as any).user;
+  const user = req.auth;
 
   if (!channelId || typeof channelId !== 'string') {
     return res.status(400).json({ error: 'channelId is required' });
@@ -15,8 +15,8 @@ livekitRouter.get('/token', requireAuth, (req, res) => {
 
   // Generate an access token for this user to join the specific room
   const roomName = `voice_${channelId}`;
-  const participantIdentity = user.userId;
-  const participantName = user.username;
+  const participantIdentity = user?.userId || 'unknown';
+  const participantName = user?.username || 'Unknown User';
 
   const at = new AccessToken(config.livekit.apiKey, config.livekit.apiSecret, {
     identity: participantIdentity,
@@ -31,6 +31,6 @@ livekitRouter.get('/token', requireAuth, (req, res) => {
     canSubscribe: true,
   });
 
-  const token = at.toJwt();
+  const token = await at.toJwt();
   res.json({ token, url: config.livekit.url });
 });

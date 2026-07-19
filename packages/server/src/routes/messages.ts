@@ -118,7 +118,7 @@ router.get('/messages/search', requireAuth, async (req: Request, res: Response) 
       params = [searchTerms, channelId, limit];
     } else {
       // Search across all channels the user has access to (in their server)
-      const user = (req as any).user;
+      const user = req.auth;
       query = `
         SELECT m.id, m.channel_id, m.author_id, m.content, m.edited_at, m.created_at,
                json_build_object(
@@ -140,7 +140,7 @@ router.get('/messages/search', requireAuth, async (req: Request, res: Response) 
         ORDER BY rank DESC, m.created_at DESC
         LIMIT $3
       `;
-      params = [searchTerms, user.userId, limit];
+      params = [searchTerms, user?.userId, limit];
     }
 
     const { rows } = await db.query(query, params);
