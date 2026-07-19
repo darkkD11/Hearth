@@ -1,0 +1,127 @@
+/* ============================================
+   Voice Chat (LiveKit)
+   ============================================ */
+
+.voice-chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.flex-center {
+  align-items: center;
+  justify-content: center;
+}
+
+.voice-chat-header {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(30, 27, 36, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-subtle);
+  z-index: 10;
+}
+
+.voice-chat-icon {
+  color: var(--accent-primary);
+  display: flex;
+}
+
+.voice-chat-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.livekit-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.lk-hearth-theme {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.voice-grid-wrapper {
+  flex: 1;
+  padding: 20px;
+  background: transparent;
+}
+
+/* Override LiveKit default styles to match Hearth */
+.lk-participant-tile {
+  background: rgba(22, 20, 26, 0.6) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-md) !important;
+  transition: all var(--transition-normal) !important;
+}
+
+.lk-participant-tile[data-lk-speaking="true"] {
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 0 4px var(--accent-glow) !important;
+}
+
+.lk-controls-wrapper {
+  background: rgba(30, 27, 36, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border-subtle);
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.lk-control-bar {
+  background: transparent !important;
+  border: none !important;
+}
+
+.lk-button {
+  background: var(--bg-elevated) !important;
+  color: var(--text-primary) !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: 56px !important;
+  height: 56px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all var(--transition-fast) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.lk-button:hover {
+  background: var(--bg-hover) !important;
+  transform: translateY(-2px) !important;
+}
+
+.lk-button.lk-disconnect-button {
+  background: var(--danger) !important;
+  color: white !important;
+}
+
+.lk-button.lk-disconnect-button:hover {
+  background: #dc2626 !important; /* darker red */
+}
+
+.voice-error {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+  padding: 16px 24px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  text-align: center;
+}

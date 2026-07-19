@@ -1,0 +1,28 @@
+/* App-level styles (loading screen) */
+
+.app-loading {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-deepest);
+}
+
+.app-loading-content {
+  text-align: center;
+  animation: fadeIn 0.5s ease;
+}
+
+.app-loading-icon {
+  font-size: 4rem;
+  margin-bottom: 16px;
+  animation: glow 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.4));
+}
+
+.app-loading-text {
+  color: var(--text-muted);
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+}

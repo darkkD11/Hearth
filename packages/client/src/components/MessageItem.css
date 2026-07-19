@@ -1,0 +1,239 @@
+/* ============================================
+   Message Item
+   ============================================ */
+
+.message-item {
+  display: flex;
+  gap: 12px;
+  padding: 4px 20px;
+  position: relative;
+  transition: background var(--transition-fast);
+}
+
+.message-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Actions Menu */
+.message-actions-menu {
+  position: absolute;
+  right: 20px;
+  top: -12px;
+  display: flex;
+  gap: 4px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 2px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(4px);
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-md);
+  z-index: 10;
+}
+
+.message-item:hover .message-actions-menu {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.message-action-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--text-muted);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.message-action-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.message-action-btn.danger:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+}
+
+/* Non-grouped (full) messages */
+.message-item:not(.grouped) {
+  padding-top: 12px;
+  margin-top: 4px;
+}
+
+/* Grouped messages */
+.message-item.grouped {
+  padding-left: 68px;
+}
+
+.message-time-hover {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.625rem;
+  color: var(--text-muted);
+  opacity: 0;
+  width: 36px;
+  text-align: center;
+  transition: opacity var(--transition-fast);
+  pointer-events: none;
+}
+
+.message-item.grouped:hover .message-time-hover {
+  opacity: 1;
+}
+
+/* Message body */
+.message-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.message-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.message-author {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+.message-author:hover {
+  text-decoration: underline;
+}
+
+.message-timestamp {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.message-edited {
+  font-size: 0.625rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-left: 4px;
+}
+
+.message-content {
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  line-height: 1.45;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Attachments */
+.message-attachments {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.message-attachment {
+  max-width: 300px;
+  max-height: 300px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-deep);
+}
+
+.message-attachment img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Reactions */
+.message-reactions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.reaction-btn {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all var(--transition-fast);
+}
+
+.reaction-btn:hover {
+  border-color: var(--text-muted);
+}
+
+.reaction-btn.active {
+  background: rgba(99, 102, 241, 0.15); /* Accent tint */
+  border-color: var(--accent-primary);
+}
+
+.reaction-count {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.reaction-btn.active .reaction-count {
+  color: var(--accent-primary);
+}
+
+/* Editing State */
+.message-edit-container {
+  margin-top: 4px;
+}
+.message-edit-input {
+  width: 100%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  resize: none;
+  min-height: 40px;
+}
+.message-edit-actions {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.message-edit-actions a {
+  color: var(--accent-primary);
+  cursor: pointer;
+}
+.message-edit-actions a:hover {
+  text-decoration: underline;
+}
+
+/* Popover for React */
+.react-popover {
+  position: absolute;
+  right: 20px;
+  top: 24px;
+  z-index: 50;
+}
