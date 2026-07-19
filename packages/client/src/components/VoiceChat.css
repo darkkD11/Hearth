@@ -192,6 +192,16 @@
   box-shadow: var(--shadow-sm) !important;
 }
 
+.lk-button svg {
+  width: 24px !important;
+  height: 24px !important;
+  margin: 0 !important;
+}
+
+.lk-button .lk-button-text {
+  display: none !important;
+}
+
 .lk-button:hover {
   background: var(--bg-hover) !important;
   transform: translateY(-2px) !important;

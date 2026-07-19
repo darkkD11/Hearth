@@ -81,15 +81,18 @@ export function VoiceChat({ channel, onDisconnect }: VoiceChatProps) {
           serverUrl={serverUrl}
           onDisconnected={onDisconnect}
           className="lk-hearth-theme"
-          screen={{
-            resolution: { width: 1920, height: 1080, frameRate: 60 },
-            audio: true,
+          options={{
+            screenShareCaptureOptions: {
+              resolution: { width: 1920, height: 1080, frameRate: 60 },
+              audio: true
+            }
           }}
         >
           <RoomContent />
           <RoomAudioRenderer />
           <div className="lk-controls-wrapper">
             <ControlBar 
+              variation="minimal"
               controls={{ 
                 microphone: true, 
                 camera: false, 
