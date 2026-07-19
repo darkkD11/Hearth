@@ -1,4 +1,6 @@
 import { useMembers } from '../hooks/useMembers';
+import { useAuth } from '../contexts/AuthContext';
+import { LogOut } from 'lucide-react';
 import './MemberList.css';
 
 interface MemberListProps {
@@ -6,7 +8,23 @@ interface MemberListProps {
 }
 
 export function MemberList({ serverId }: MemberListProps) {
-  const { onlineMembers, offlineMembers, isLoading } = useMembers(serverId);
+  const { onlineMembers, offlineMembers, isLoading, kickMember } = useMembers(serverId);
+  const { user, server } = useAuth();
+
+  // Determine if current user can kick
+  const allMembers = [...onlineMembers, ...offlineMembers];
+  const currentUserMember = allMembers.find(m => m.user_id === user?.id);
+  const isOwner = server?.owner_id === user?.id;
+  
+  const currentUserPerms = currentUserMember?.roles?.reduce((acc, r) => acc | r.permissions, 0) || 0;
+  // MANAGE_MEMBERS = 4, ADMINISTRATOR = 64
+  const canKick = isOwner || !!(currentUserPerms & 4) || !!(currentUserPerms & 64);
+
+  const handleKick = (userId: string, username?: string) => {
+    if (window.confirm(`Are you sure you want to kick ${username}?`)) {
+      kickMember(userId);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -52,6 +70,15 @@ export function MemberList({ serverId }: MemberListProps) {
                   {member.nickname || member.user?.display_name || member.user?.username}
                 </span>
               </div>
+              {canKick && member.user_id !== server?.owner_id && member.user_id !== user?.id && (
+                <button
+                  className="kick-btn"
+                  onClick={() => handleKick(member.user_id, member.user?.username)}
+                  title={`Kick ${member.user?.username}`}
+                >
+                  <LogOut size={14} />
+                </button>
+              )}
             </div>
           ))}
         </div>
@@ -79,6 +106,15 @@ export function MemberList({ serverId }: MemberListProps) {
                   {member.nickname || member.user?.display_name || member.user?.username}
                 </span>
               </div>
+              {canKick && member.user_id !== server?.owner_id && member.user_id !== user?.id && (
+                <button
+                  className="kick-btn"
+                  onClick={() => handleKick(member.user_id, member.user?.username)}
+                  title={`Kick ${member.user?.username}`}
+                >
+                  <LogOut size={14} />
+                </button>
+              )}
             </div>
           ))}
         </div>

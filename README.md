@@ -80,7 +80,7 @@ hearth/
 ## Phases
 
 - [x] **Phase 1** — Auth, text channels, real-time messaging
-- [ ] **Phase 2** — Image upload, emoji reactions, typing indicators, presence
-- [ ] **Phase 3** — Voice channels via LiveKit
-- [ ] **Phase 4** — Screen/game streaming at 1080p60
-- [ ] **Phase 5** — Notifications, search, moderation
+- [x] **Phase 2** — Image upload, emoji reactions, typing indicators, presence
+- [x] **Phase 3** — Voice channels via LiveKit
+- [x] **Phase 4** — Screen/game streaming at 1080p60
+- [x] **Phase 5** — Notifications, search, moderation

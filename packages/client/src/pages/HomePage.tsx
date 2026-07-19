@@ -6,6 +6,7 @@ import { Sidebar } from '../components/Sidebar';
 import { ChatView } from '../components/ChatView';
 import { VoiceChat } from '../components/VoiceChat';
 import { MemberList } from '../components/MemberList';
+import { requestNotificationPermission } from '../lib/notifications';
 import './HomePage.css';
 
 export function HomePage() {
@@ -14,6 +15,11 @@ export function HomePage() {
   const { channels } = useChannels(server?.id ?? null);
   const [activeChannelId, setActiveChannelId] = useState<string | null>(null);
   const [showMembers, setShowMembers] = useState(true);
+
+  // Request notification permission on mount
+  useEffect(() => {
+    requestNotificationPermission();
+  }, []);
 
   // Auto-select first text channel
   useEffect(() => {

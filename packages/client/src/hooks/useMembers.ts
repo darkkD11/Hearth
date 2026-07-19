@@ -57,5 +57,19 @@ export function useMembers(serverId: string | null) {
   const onlineMembers = members.filter((m) => m.user?.status !== 'offline');
   const offlineMembers = members.filter((m) => m.user?.status === 'offline');
 
-  return { members, onlineMembers, offlineMembers, isLoading };
+  const kickMember = async (userId: string) => {
+    if (!serverId) return false;
+    try {
+      await api.post(`/servers/${serverId}/members/${userId}/kick`);
+      // The socket event member:left will handle removing them from the UI,
+      // but we can also optimistically remove them
+      setMembers((prev) => prev.filter((m) => m.user_id !== userId));
+      return true;
+    } catch (err) {
+      console.error('[useMembers] Kick failed:', err);
+      return false;
+    }
+  };
+
+  return { members, onlineMembers, offlineMembers, isLoading, kickMember };
 }

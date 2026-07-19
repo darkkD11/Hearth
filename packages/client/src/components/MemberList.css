@@ -76,3 +76,26 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.member-item:hover .kick-btn {
+  opacity: 1;
+}
+
+.kick-btn {
+  opacity: 0;
+  background: transparent;
+  color: var(--danger);
+  border: none;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  margin-left: auto;
+}
+
+.kick-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+}

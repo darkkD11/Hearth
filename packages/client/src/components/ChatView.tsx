@@ -1,8 +1,11 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useMessages } from '../hooks/useMessages';
+import { useMembers } from '../hooks/useMembers';
+import { useAuth } from '../contexts/AuthContext';
 import { MessageItem } from './MessageItem';
 import { MessageInput } from './MessageInput';
-import { Hash, Flame, Users } from 'lucide-react';
+import { SearchPanel } from './SearchPanel';
+import { Hash, Flame, Users, Search } from 'lucide-react';
 import type { Channel } from '@hearth/shared';
 import './ChatView.css';
 
@@ -17,6 +20,17 @@ export function ChatView({ channel, showMembers, onToggleMembers }: ChatViewProp
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const prevMessageCountRef = useRef(0);
+  const [showSearch, setShowSearch] = useState(false);
+
+  const { server, user } = useAuth();
+  const { members } = useMembers(server?.id ?? null);
+  
+  // Determine if current user can manage messages (admin/owner)
+  const currentUserMember = members.find(m => m.user_id === user?.id);
+  const isOwner = server?.owner_id === user?.id;
+  const currentUserPerms = currentUserMember?.roles?.reduce((acc, r) => acc | r.permissions, 0) || 0;
+  // MANAGE_MESSAGES = 16, ADMINISTRATOR = 64
+  const canManageMessages = isOwner || !!(currentUserPerms & 16) || !!(currentUserPerms & 64);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -73,6 +87,14 @@ export function ChatView({ channel, showMembers, onToggleMembers }: ChatViewProp
         </div>
         <div className="chat-header-actions">
           <button
+            className={`btn-ghost btn-sm chat-header-btn ${showSearch ? 'active' : ''}`}
+            onClick={() => setShowSearch((s) => !s)}
+            title="Search messages"
+            style={{ display: 'flex' }}
+          >
+            <Search size={20} />
+          </button>
+          <button
             className={`btn-ghost btn-sm chat-header-btn ${showMembers ? 'active' : ''}`}
             onClick={onToggleMembers}
             title="Toggle member list"
@@ -123,6 +145,7 @@ export function ChatView({ channel, showMembers, onToggleMembers }: ChatViewProp
               key={message.id}
               message={message}
               isGrouped={isGrouped}
+              canManage={canManageMessages}
               onEdit={editMessage}
               onDelete={deleteMessage}
               onReact={reactMessage}
@@ -138,6 +161,14 @@ export function ChatView({ channel, showMembers, onToggleMembers }: ChatViewProp
         channelName={channel.name}
         onSend={sendMessage}
       />
+
+      {/* Search panel overlay */}
+      {showSearch && (
+        <SearchPanel
+          channelId={channel.id}
+          onClose={() => setShowSearch(false)}
+        />
+      )}
     </div>
   );
 }

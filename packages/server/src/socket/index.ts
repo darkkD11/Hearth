@@ -158,11 +158,39 @@ export function initializeSocket(
     ) => {
       try {
         const { message_id, channel_id } = data;
+
+        // First try deleting as the author
         const { rowCount } = await db.query(
           `DELETE FROM messages WHERE id = $1 AND author_id = $2`,
           [message_id, user_id]
         );
-        if (rowCount === 0) return callback({ success: false, error: 'Not authorized or message not found' });
+
+        if (rowCount === 0) {
+          // Check if the user has MANAGE_MESSAGES or ADMINISTRATOR permission
+          const { rows: roleRows } = await db.query(
+            `SELECT COALESCE(BIT_OR(r.permissions), 0) as permissions
+             FROM member_roles mr
+             JOIN roles r ON r.id = mr.role_id
+             WHERE mr.user_id = $1 AND mr.server_id = $2`,
+            [user_id, server_id]
+          );
+          const perms = Number(roleRows[0]?.permissions || 0);
+          // MANAGE_MESSAGES = 1 << 4 = 16, ADMINISTRATOR = 1 << 6 = 64
+          const canManage = !!(perms & 16) || !!(perms & 64);
+
+          if (!canManage) {
+            return callback({ success: false, error: 'Not authorized' });
+          }
+
+          // Admin delete
+          const { rowCount: adminDelete } = await db.query(
+            `DELETE FROM messages WHERE id = $1`,
+            [message_id]
+          );
+          if (adminDelete === 0) {
+            return callback({ success: false, error: 'Message not found' });
+          }
+        }
         
         io.to(`channel:${channel_id}`).emit('message:deleted', { message_id, channel_id });
         callback({ success: true });

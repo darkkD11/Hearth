@@ -9,6 +9,7 @@ import './MessageItem.css';
 interface MessageItemProps {
   message: Message;
   isGrouped: boolean;
+  canManage?: boolean;
   onEdit?: (id: string, content: string) => void;
   onDelete?: (id: string) => void;
   onReact?: (id: string, emoji: string) => void;
@@ -29,7 +30,7 @@ function formatTime(dateStr: string): string {
   return `${date.toLocaleDateString()} ${time}`;
 }
 
-export function MessageItem({ message, isGrouped, onEdit, onDelete, onReact, onUnreact }: MessageItemProps) {
+export function MessageItem({ message, isGrouped, canManage, onEdit, onDelete, onReact, onUnreact }: MessageItemProps) {
   const { user } = useAuth();
   const author = message.author;
   const initial = author?.username?.charAt(0).toUpperCase() || '?';
@@ -149,14 +150,15 @@ export function MessageItem({ message, isGrouped, onEdit, onDelete, onReact, onU
         </button>
         
         {isAuthor && (
-          <>
-            <button className="message-action-btn" onClick={() => setIsEditing(true)} title="Edit Message">
-              <Pencil size={14} />
-            </button>
-            <button className="message-action-btn danger" onClick={() => onDelete?.(message.id)} title="Delete Message">
-              <Trash2 size={14} />
-            </button>
-          </>
+          <button className="message-action-btn" onClick={() => setIsEditing(true)} title="Edit Message">
+            <Pencil size={14} />
+          </button>
+        )}
+        
+        {(isAuthor || canManage) && (
+          <button className="message-action-btn danger" onClick={() => onDelete?.(message.id)} title="Delete Message">
+            <Trash2 size={14} />
+          </button>
         )}
         
         {showEmojiPicker && (

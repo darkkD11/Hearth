@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { api } from '../lib/api';
 import { useSocket } from '../contexts/SocketContext';
+import { useAuth } from '../contexts/AuthContext';
+import { sendDesktopNotification } from '../lib/notifications';
 import type { Message, PaginatedMessages } from '@hearth/shared';
 
 export function useMessages(channelId: string | null) {
@@ -8,6 +10,7 @@ export function useMessages(channelId: string | null) {
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const { socket } = useSocket();
+  const { user } = useAuth();
   const loadedChannelRef = useRef<string | null>(null);
 
   // Load initial messages when channel changes
@@ -46,6 +49,15 @@ export function useMessages(channelId: string | null) {
     const handleNewMessage = (message: Message) => {
       if (message.channel_id === channelId) {
         setMessages((prev) => [...prev, message]);
+
+        // Fire desktop notification if the message is from someone else
+        if (message.author_id !== user?.id) {
+          const authorName = message.author?.display_name || message.author?.username || 'Someone';
+          sendDesktopNotification(
+            `${authorName}`,
+            message.content.length > 100 ? message.content.slice(0, 100) + '...' : message.content
+          );
+        }
       }
     };
 

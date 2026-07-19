@@ -76,4 +76,80 @@ router.get('/channels/:channelId/messages', requireAuth, async (req: Request, re
   }
 });
 
+/**
+ * GET /api/messages/search?q=...&channelId=...&limit=25
+ * Full-text search across messages.
+ */
+router.get('/messages/search', requireAuth, async (req: Request, res: Response) => {
+  try {
+    const { q, channelId } = req.query;
+    const limit = Math.min(parseInt(req.query.limit as string) || 25, 50);
+
+    if (!q || typeof q !== 'string' || q.trim().length === 0) {
+      return res.status(400).json({ error: 'Search query (q) is required' });
+    }
+
+    // Convert the user query to a tsquery (prefix matching for partial words)
+    const searchTerms = q.trim().split(/\s+/).map(t => t + ':*').join(' & ');
+
+    let query: string;
+    let params: any[];
+
+    if (channelId && typeof channelId === 'string') {
+      query = `
+        SELECT m.id, m.channel_id, m.author_id, m.content, m.edited_at, m.created_at,
+               json_build_object(
+                 'id', u.id,
+                 'username', u.username,
+                 'display_name', u.display_name,
+                 'avatar_url', u.avatar_url,
+                 'status', u.status,
+                 'created_at', u.created_at,
+                 'updated_at', u.updated_at
+               ) as author,
+               ts_rank(to_tsvector('english', m.content), to_tsquery('english', $1)) as rank
+        FROM messages m
+        JOIN users u ON u.id = m.author_id
+        WHERE m.channel_id = $2
+          AND to_tsvector('english', m.content) @@ to_tsquery('english', $1)
+        ORDER BY rank DESC, m.created_at DESC
+        LIMIT $3
+      `;
+      params = [searchTerms, channelId, limit];
+    } else {
+      // Search across all channels the user has access to (in their server)
+      const user = (req as any).user;
+      query = `
+        SELECT m.id, m.channel_id, m.author_id, m.content, m.edited_at, m.created_at,
+               json_build_object(
+                 'id', u.id,
+                 'username', u.username,
+                 'display_name', u.display_name,
+                 'avatar_url', u.avatar_url,
+                 'status', u.status,
+                 'created_at', u.created_at,
+                 'updated_at', u.updated_at
+               ) as author,
+               c.name as channel_name,
+               ts_rank(to_tsvector('english', m.content), to_tsquery('english', $1)) as rank
+        FROM messages m
+        JOIN users u ON u.id = m.author_id
+        JOIN channels c ON c.id = m.channel_id
+        JOIN server_members sm ON sm.server_id = c.server_id AND sm.user_id = $2
+        WHERE to_tsvector('english', m.content) @@ to_tsquery('english', $1)
+        ORDER BY rank DESC, m.created_at DESC
+        LIMIT $3
+      `;
+      params = [searchTerms, user.userId, limit];
+    }
+
+    const { rows } = await db.query(query, params);
+
+    res.json({ results: rows });
+  } catch (err) {
+    console.error('[Messages] Search error:', err);
+    res.status(500).json({ error: 'Search failed' });
+  }
+});
+
 export default router;

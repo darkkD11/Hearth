@@ -27,6 +27,7 @@ livekitRouter.get('/token', requireAuth, (req, res) => {
     roomJoin: true,
     room: roomName,
     canPublish: true,
+    canPublishData: true,
     canSubscribe: true,
   });
 

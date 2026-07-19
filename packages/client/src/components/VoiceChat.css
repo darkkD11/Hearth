@@ -1,5 +1,5 @@
 /* ============================================
-   Voice Chat (LiveKit)
+   Voice Chat (LiveKit) + Screen Share
    ============================================ */
 
 .voice-chat-container {
@@ -16,6 +16,26 @@
   justify-content: center;
 }
 
+/* Connecting State */
+.connecting-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-muted);
+}
+
+.pulse-icon {
+  animation: pulse-glow 2s ease-in-out infinite;
+  color: var(--accent-primary);
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+/* Header */
 .voice-chat-header {
   padding: 16px 20px;
   display: flex;
@@ -39,11 +59,13 @@
   color: var(--text-primary);
 }
 
+/* LiveKit Wrapper */
 .livekit-wrapper {
   flex: 1;
   display: flex;
   flex-direction: column;
   position: relative;
+  min-height: 0;
 }
 
 .lk-hearth-theme {
@@ -53,13 +75,68 @@
   width: 100%;
 }
 
+/* Grid (default audio-only mode) */
 .voice-grid-wrapper {
   flex: 1;
   padding: 20px;
   background: transparent;
+  min-height: 0;
+  overflow: auto;
 }
 
-/* Override LiveKit default styles to match Hearth */
+/* ============================================
+   Presentation Mode (Screen Share Active)
+   ============================================ */
+.voice-grid-wrapper.presentation-mode {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+}
+
+.presentation-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border);
+}
+
+.presentation-focus {
+  width: 100%;
+  height: 100%;
+}
+
+/* Focus layout video fills the container */
+.presentation-focus video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: var(--radius-lg);
+}
+
+/* Participant strip (vertical sidebar during screen share) */
+.presentation-strip {
+  width: 200px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}
+
+.presentation-strip .lk-participant-tile {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   LiveKit Component Overrides
+   ============================================ */
+
+/* Participant tiles */
 .lk-participant-tile {
   background: rgba(22, 20, 26, 0.6) !important;
   border: 1px solid var(--border) !important;
@@ -73,6 +150,17 @@
   box-shadow: 0 0 0 4px var(--accent-glow) !important;
 }
 
+/* Participant metadata */
+.lk-participant-metadata {
+  background: linear-gradient(transparent, rgba(0,0,0,0.7)) !important;
+}
+
+.lk-participant-name {
+  color: var(--text-primary) !important;
+  font-weight: 500 !important;
+}
+
+/* Controls wrapper */
 .lk-controls-wrapper {
   background: rgba(30, 27, 36, 0.4);
   backdrop-filter: blur(12px);
@@ -83,6 +171,7 @@
   justify-content: center;
 }
 
+/* Control bar */
 .lk-control-bar {
   background: transparent !important;
   border: none !important;
@@ -108,15 +197,24 @@
   transform: translateY(-2px) !important;
 }
 
+/* Screen share button glow when active */
+.lk-button[data-lk-source="screen_share"][data-lk-enabled="true"] {
+  background: var(--accent-primary) !important;
+  color: white !important;
+  box-shadow: 0 0 12px var(--accent-glow) !important;
+}
+
+/* Disconnect button */
 .lk-button.lk-disconnect-button {
   background: var(--danger) !important;
   color: white !important;
 }
 
 .lk-button.lk-disconnect-button:hover {
-  background: #dc2626 !important; /* darker red */
+  background: #dc2626 !important;
 }
 
+/* Error state */
 .voice-error {
   background: rgba(239, 68, 68, 0.1);
   color: var(--danger);
@@ -124,4 +222,16 @@
   border-radius: var(--radius-md);
   border: 1px solid rgba(239, 68, 68, 0.2);
   text-align: center;
+}
+
+/* Focus layout overrides */
+.lk-focus-layout {
+  height: 100% !important;
+}
+
+.lk-focus-layout .lk-participant-tile {
+  border: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }

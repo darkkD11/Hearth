@@ -18,3 +18,12 @@ logging:
 room:
   empty_timeout: 300       # 5 minutes
   max_participants: 10     # More than enough for 6-8 friends
+
+# Screen share / video quality
+video:
+  dynacast: true           # Only send video to active subscribers
+  
+# Allow high-quality screen share (1080p60)
+limit:
+  max_video_bitrate: 8000000       # 8 Mbps for screen share
+  max_screen_share_bitrate: 12000000  # 12 Mbps cap for screen share

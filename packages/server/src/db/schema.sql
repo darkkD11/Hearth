@@ -119,3 +119,7 @@ CREATE TABLE IF NOT EXISTS reactions (
   created_at  TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE(message_id, user_id, emoji)
 );
+
+-- Full-text search index on messages
+CREATE INDEX IF NOT EXISTS idx_messages_search
+  ON messages USING GIN (to_tsvector('english', content));
